@@ -1,7 +1,6 @@
 package com.licola.drawable.generate;
 
 
-import com.licola.llogger.LLogger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -251,10 +250,10 @@ public class DrawableGenerate {
       try {
         int sum = new DrawableGenerate(this).generate();
         String outFileInfo = String.format(Locale.CHINA, "生成%d个%s类型drawable文件", sum, shapeAlias);
-        LLogger.i(outFileInfo);
+        System.out.println(outFileInfo);
       } catch (IOException e) {
         e.printStackTrace();
-        LLogger.e("生成drawable文件失败", e);
+        System.out.println("生成drawable文件失败"+e.toString());
       }
 
     }

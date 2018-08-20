@@ -31,4 +31,12 @@ public static void main(String[] args) throws IOException {
         .build();
   }
 ```
-在类中定义mian方法，run直接运行在PC本机上，生成资源xml文件，
+在某个类中定义mian方法，run直接运行在PC本机上，生成资源xml文件。
+![效果图](https://github.com/LiCola/DrawableGenerate/blob/master/image/drawable-build.png)
+
+# API
+详见[DrawableGenerate](https://github.com/LiCola/DrawableGenerate/blob/master/drawable-generate/src/main/java/com/licola/drawable/generate/DrawableGenerate.java)
+
+# 关联资源定义
+[color](https://github.com/LiCola/DrawableGenerate/blob/master/drawable-generate/src/main/res/values/color.xml)
+[dimens](https://github.com/LiCola/DrawableGenerate/blob/master/drawable-generate/src/main/res/values/dimens.xml)
