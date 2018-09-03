@@ -4,5 +4,6 @@
   <dimen name="x2dp">2dp</dimen>
 
   <dimen name="x10dp">10dp</dimen>
+  <dimen name="x12dp">12dp</dimen>
 
 </resources>

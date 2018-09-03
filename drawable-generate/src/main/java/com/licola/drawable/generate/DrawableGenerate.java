@@ -152,6 +152,126 @@ public class DrawableGenerate {
     }
 
     /**
+     * 添加corners圆角(只有上边Top)
+     *
+     * @param dimenIds dimen资源id数组
+     */
+    public Builder addCornersTop(String[] dimenIds) {
+      List<OnProcessResources> onProcessResources = new ArrayList<>(dimenIds.length);
+      for (final String resId : dimenIds) {
+        onProcessResources.add(new OnProcessResources() {
+          @Override
+          public String onProcessName() {
+            return String.format("corners_top_%s", resId.toLowerCase());
+          }
+
+          @Override
+          public String onProcessContent() {
+            return String
+                .format("\t<corners\n"
+                        + "    android:topLeftRadius=\"%s\"\n"
+                        + "    android:topRightRadius=\"%s\" />",
+                    formatResource(TYPE_DIMEN, resId),
+                    formatResource(TYPE_DIMEN, resId));
+          }
+        });
+      }
+      this.curLevelNodes = process(curLevelNodes, onProcessResources);
+
+      return this;
+    }
+
+    /**
+     * 添加corners圆角(只有底边Bottom)
+     *
+     * @param dimenIds dimen资源id数组
+     */
+    public Builder addCornersBottom(String[] dimenIds) {
+      List<OnProcessResources> onProcessResources = new ArrayList<>(dimenIds.length);
+      for (final String resId : dimenIds) {
+        onProcessResources.add(new OnProcessResources() {
+          @Override
+          public String onProcessName() {
+            return String.format("corners_bottom_%s", resId.toLowerCase());
+          }
+
+          @Override
+          public String onProcessContent() {
+            return String
+                .format("\t<corners\n"
+                        + "    android:bottomLeftRadius=\"%s\"\n"
+                        + "    android:bottomRightRadius=\"%s\" />",
+                    formatResource(TYPE_DIMEN, resId),
+                    formatResource(TYPE_DIMEN, resId));
+          }
+        });
+      }
+      this.curLevelNodes = process(curLevelNodes, onProcessResources);
+
+      return this;
+    }
+
+    /**
+     * 添加corners圆角(只有左边Left)
+     *
+     * @param dimenIds dimen资源id数组
+     */
+    public Builder addCornersLeft(String[] dimenIds) {
+      List<OnProcessResources> onProcessResources = new ArrayList<>(dimenIds.length);
+      for (final String resId : dimenIds) {
+        onProcessResources.add(new OnProcessResources() {
+          @Override
+          public String onProcessName() {
+            return String.format("corners_left_%s", resId.toLowerCase());
+          }
+
+          @Override
+          public String onProcessContent() {
+            return String
+                .format("\t<corners\n"
+                        + "    android:bottomLeftRadius=\"%s\"\n"
+                        + "    android:topLeftRadius=\"%s\" />",
+                    formatResource(TYPE_DIMEN, resId),
+                    formatResource(TYPE_DIMEN, resId));
+          }
+        });
+      }
+      this.curLevelNodes = process(curLevelNodes, onProcessResources);
+
+      return this;
+    }
+
+    /**
+     * 添加corners圆角(只有左边Left)
+     *
+     * @param dimenIds dimen资源id数组
+     */
+    public Builder addCornersRight(String[] dimenIds) {
+      List<OnProcessResources> onProcessResources = new ArrayList<>(dimenIds.length);
+      for (final String resId : dimenIds) {
+        onProcessResources.add(new OnProcessResources() {
+          @Override
+          public String onProcessName() {
+            return String.format("corners_right_%s", resId.toLowerCase());
+          }
+
+          @Override
+          public String onProcessContent() {
+            return String
+                .format("\t<corners\n"
+                        + "    android:bottomRightRadius=\"%s\"\n"
+                        + "    android:topRightRadius=\"%s\" />",
+                    formatResource(TYPE_DIMEN, resId),
+                    formatResource(TYPE_DIMEN, resId));
+          }
+        });
+      }
+      this.curLevelNodes = process(curLevelNodes, onProcessResources);
+
+      return this;
+    }
+
+    /**
      * 添加solid填充色
      *
      * @param colorIds color资源颜色id数组
@@ -253,7 +373,7 @@ public class DrawableGenerate {
         System.out.println(outFileInfo);
       } catch (IOException e) {
         e.printStackTrace();
-        System.out.println("生成drawable文件失败"+e.toString());
+        System.out.println("生成drawable文件失败" + e.toString());
       }
 
     }
@@ -274,13 +394,14 @@ public class DrawableGenerate {
 
   private static List<DrawableNode> process(List<DrawableNode> curLevelNodes,
       List<OnProcessResources> onProcessResources) {
-
     List<DrawableNode> newCurLevelNodes = new ArrayList<>();
     for (DrawableNode curDepthNode : curLevelNodes) {
       for (OnProcessResources process : onProcessResources) {
         String childName = appendFileNameOrEmpty(curDepthNode.getName(), process.onProcessName());
         String childContent = appendContent(curDepthNode.getContent(), process.onProcessContent());
+
         DrawableNode childNode = new DrawableNode(childName, childContent);
+
         curDepthNode.addChildNode(childNode);
         newCurLevelNodes.add(childNode);
       }

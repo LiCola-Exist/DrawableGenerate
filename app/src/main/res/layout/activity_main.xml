@@ -5,13 +5,13 @@
   android:layout_height="match_parent"
   android:orientation="vertical"
   android:showDividers="middle|end"
-  android:divider="@drawable/line_size_x1dp_solid_black_a87"
+  android:dividerPadding="@dimen/x12dp"
   tools:context=".MainActivity">
 
   <ImageView
     android:layout_width="100dp"
     android:layout_height="100dp"
-    android:src="@drawable/circle_solid_black_a54" />
+    android:src="@drawable/circle_solid_black_a32_padding_x12dp" />
 
   <ImageView
     android:layout_marginTop="100dp"

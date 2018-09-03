@@ -28,5 +28,16 @@ public class JavaMain {
         .addSize(new String[]{"x1dp", "x10dp"})//各种分割线大小
         .addSolid(new String[]{"black_A87", "black_A54", "black_A32"})//各种分割线
         .build();
+
+    String[] baseCornersColor = new String[]{"orange", "white"};
+    DrawableGenerate.newBuilder(dir, "rectangle", "", true)
+        .addCornersBottom(new String[]{"x10dp"})
+        .addSolid(baseCornersColor)
+        .build();
+    DrawableGenerate.newBuilder(dir, "rectangle", "", true)
+        .addCornersLeft(new String[]{"x10dp"})
+        .addSolid(baseCornersColor)
+        .build();
+
   }
 }
