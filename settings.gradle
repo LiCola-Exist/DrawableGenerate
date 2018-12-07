@@ -1,1 +1,1 @@
-include ':app', ':drawable-generate'
+include ':app', ':drawable-generate', ':drawable-generate-plugin'

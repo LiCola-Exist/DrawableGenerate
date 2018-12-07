@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="transparent">#00000000</color>
-
   <color name="orange_minor">#FFAD33</color>
   <color name="orange_medium">#FFA116</color>
   <color name="orange_light">#FFDEAD</color>
@@ -67,7 +66,6 @@
   <color name="cyan_A54">#8A2C9A2D</color>
   <color name="cyan_A32">#422C9A2D</color>
   <color name="cyan_A12">#1E2C9A2D</color>
-
 
 
 </resources>
