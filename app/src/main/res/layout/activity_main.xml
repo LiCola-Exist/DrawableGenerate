@@ -11,7 +11,7 @@
   <ImageView
     android:layout_width="100dp"
     android:layout_height="100dp"
-    android:src="@drawable/circle_solid_black_a32_padding_x12dp" />
+    android:src="@drawable/circle_solid_black_a32" />
 
   <ImageView
     android:layout_marginTop="100dp"

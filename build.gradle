@@ -32,7 +32,13 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-ext{
+ext {
+    // Sdk and tools
+    minSdkVersion = 21
+    targetSdkVersion = 26
+    compileSdkVersion = 27
+    sourceCompatibilityVersion = JavaVersion.VERSION_1_8
+    targetCompatibilityVersion = JavaVersion.VERSION_1_8
+
     lloggerVersion = "1.4.5"
 }
-

@@ -1,34 +1,36 @@
 package com.licola.drawable.generate;
 
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Drawable资源构建类
- * 示例：指定相同shape形状的不同资源形式
- * DrawableGenerate.newBuilder(dir, "oval", "circle", true)
- * .addSolid(new String[]{"black_A87", "black_A54", "black_A32"})
- * .build();
+ * Drawable资源构建类 示例：指定相同shape形状的不同资源形式 DrawableGenerate.newBuilder(dir, "oval", "circle", true)
+ * .addSolid(new String[]{"black_A87", "black_A54", "black_A32"}) .build();
  *
- * 生成：多个类似drawable资源
- * circle_solid_black_a32.xml，circle_solid_black_a54.xml，circle_solid_black_a87.xml
+ * 生成：多个类似drawable资源 circle_solid_black_a32.xml，circle_solid_black_a54.xml，circle_solid_black_a87.xml
  *
- * 说明：
- * 生成的xml文件名反映内部drawable信息，可以直观的通过名称了解内部数据形式,
- * 同时为了能够文件名有直接具体的含义，只能通过{android:color="@color/black_A32"}形式引用现有资源。
+ * 说明： 生成的xml文件名反映内部drawable信息，可以直观的通过名称了解内部数据形式, 同时为了能够文件名有直接具体的含义，只能通过{android:color="@color/black_A32"}形式引用现有资源。
  *
- * 构造过程add过程，类似多叉树（有重复节点）的构造过程，每一层的叶子节点都包含上一级全部信息。
- * 最后的叶子节点是具有完备的节点信息，build就是遍历多叉树叶子节点过程，根据叶子生成对应的drawable文件
+ * 构造过程add过程，类似多叉树（有重复节点）的构造过程，每一层的叶子节点都包含上一级全部信息。 最后的叶子节点是具有完备的节点信息，build就是使用多叉树叶子节点过程，根据叶子生成对应的drawable文件
  *
+ * 更新记录：
+ * 2018/12/11：精简类，优化成一个类文件处理。并开放外部
  * @author LiCola
  * @date 2018/8/16
  */
 public class DrawableGenerate {
+
+  private static final String FILE_SUFFIX = ".xml";
+
+  private static final byte[] HEAD = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n".getBytes();
 
   private Builder builder;
 
@@ -36,66 +38,34 @@ public class DrawableGenerate {
     this.builder = builder;
   }
 
-  /**
-   * @see Builder#Builder(File, String, String, boolean)
-   */
-  public static Builder newBuilder(File outDir, String shape, String shapeAlias,
-      boolean replace) {
-    return new Builder(outDir, shape, shapeAlias, replace);
+  public static Builder newBuilder(File outDir, boolean replace, String shape, String shapeAlias) {
+    return new Builder(outDir, replace, shape, shapeAlias);
   }
 
-  /**
-   * @see Builder#Builder(File, String, String, boolean)
-   */
-  public static Builder newBuilder(File outDir, String shape, boolean replace) {
-    return new Builder(outDir, shape, shape, replace);
+  public static Builder newBuilder(File outDir, boolean replace, String shape) {
+    return new Builder(outDir, replace, shape, shape);
   }
 
   public int generate() throws IOException {
 
-    DrawableNode rootNode = builder.rootNode;
     File outDir = builder.outDir;
     boolean replace = builder.replace;
 
-    List<DrawableNode> leafsNodes = leafsTraversal(rootNode, new ArrayList<DrawableNode>());
+    List<DrawableNode> leafsNodes = builder.curLevelNodes;
 
     int fileSum = 0;
     for (DrawableNode leafsNode : leafsNodes) {
-      File fileOut = DrawableFileHelper
-          .checkFile(DrawableFileHelper.makeFile(outDir, leafsNode.name), replace);
-      if (fileOut == null) {
+      File outFile = makeFile(outDir, leafsNode.name);
+      if (!replace && outDir.exists()) {
         continue;
       }
-      DrawableFileHelper.generateXmlFile(fileOut, leafsNode.content.getBytes());
+      generateXmlFile(outFile, leafsNode.content.getBytes());
       fileSum++;
     }
 
     return fileSum;
   }
 
-  /**
-   * 遍历多叉树的叶子节点
-   *
-   * @param node 父节点
-   * @param leafs 叶子节点集合
-   * @return leafs 返回叶子节点集合
-   */
-  private static List<DrawableNode> leafsTraversal(DrawableNode node, List<DrawableNode> leafs) {
-    if (node == null) {
-      return leafs;
-    }
-
-    List<DrawableNode> childNodes = node.getChildNodes();
-    if (childNodes == null || childNodes.isEmpty()) {
-      leafs.add(node);
-      return leafs;
-    }
-
-    for (DrawableNode drawableNode : childNodes) {
-      leafsTraversal(drawableNode, leafs);
-    }
-    return leafs;
-  }
 
   static final class Builder {
 
@@ -109,11 +79,11 @@ public class DrawableGenerate {
 
     /**
      * @param outDir 输出目录
+     * @param replace 是否替换已经存在的drawable
      * @param shape android:shape="形状"
      * @param shapeAlias 形状别名
-     * @param replace 是否替换已经存在的drawable
      */
-    Builder(File outDir, String shape, String shapeAlias, boolean replace) {
+    Builder(File outDir, boolean replace, String shape, String shapeAlias) {
       this.outDir = outDir;
       this.replace = replace;
 
@@ -123,6 +93,10 @@ public class DrawableGenerate {
               + "  android:shape=\"%s\">", shape);
       rootNode = new DrawableNode(shapeAlias, rootContent);
       curLevelNodes = Collections.singletonList(rootNode);
+    }
+
+    public Builder addNode(OnProcessResources[] resources){
+      return addNode(Arrays.asList(resources));
     }
 
     /**
@@ -146,9 +120,7 @@ public class DrawableGenerate {
           }
         });
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
-
-      return this;
+      return addNode(onProcessResources);
     }
 
     /**
@@ -176,9 +148,7 @@ public class DrawableGenerate {
           }
         });
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
-
-      return this;
+      return addNode(onProcessResources);
     }
 
     /**
@@ -206,9 +176,7 @@ public class DrawableGenerate {
           }
         });
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
-
-      return this;
+      return addNode(onProcessResources);
     }
 
     /**
@@ -236,9 +204,8 @@ public class DrawableGenerate {
           }
         });
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
+      return addNode(onProcessResources);
 
-      return this;
     }
 
     /**
@@ -266,9 +233,8 @@ public class DrawableGenerate {
           }
         });
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
+      return addNode(onProcessResources);
 
-      return this;
     }
 
     /**
@@ -293,8 +259,8 @@ public class DrawableGenerate {
           }
         });
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
-      return this;
+      return addNode(onProcessResources);
+
     }
 
     /**
@@ -324,8 +290,8 @@ public class DrawableGenerate {
           }
         });
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
-      return this;
+      return addNode(onProcessResources);
+
     }
 
 
@@ -359,27 +325,83 @@ public class DrawableGenerate {
           });
         }
       }
-      this.curLevelNodes = process(curLevelNodes, onProcessResources);
-      return this;
+      return addNode(onProcessResources);
+
+    }
+
+    private Builder close() {
+
+      return addNode(Collections.singletonList(new OnProcessResources() {
+        @Override
+        public String onProcessName() {
+          return null;
+        }
+
+        @Override
+        public String onProcessContent() {
+          return "</shape>";
+        }
+      }));
     }
 
     /**
      * 构造各种参数配置的多个drawable
      */
-    public void build() {
+    public String build() {
+
+      String msg;
       try {
-        int sum = new DrawableGenerate(this).generate();
-        String outFileInfo = String.format(Locale.CHINA, "生成%d个%s类型drawable文件", sum, shapeAlias);
-        System.out.println(outFileInfo);
+        DrawableGenerate drawableGenerate = new DrawableGenerate(close());
+        int sum = drawableGenerate.generate();
+        msg = String.format(Locale.CHINA, "生成%d个%s类型drawable文件", sum, shapeAlias);
       } catch (IOException e) {
-        e.printStackTrace();
-        System.out.println("生成drawable文件失败" + e.toString());
+        msg = "生成drawable文件失败:" + e.toString();
+      }
+      return msg;
+    }
+
+    private Builder addNode(List<OnProcessResources> onProcessResources) {
+
+      List<DrawableNode> newCurLevelNodes = new ArrayList<>();
+      for (DrawableNode curDepthNode : curLevelNodes) {
+        for (OnProcessResources process : onProcessResources) {
+          String childName = appendFileNameOrEmpty(curDepthNode.name, process.onProcessName());
+          String childContent = appendContent(curDepthNode.content,
+              process.onProcessContent());
+
+          DrawableNode childNode = new DrawableNode(childName, childContent);
+
+          curDepthNode.addChildNode(childNode);
+          newCurLevelNodes.add(childNode);
+        }
       }
 
+      this.curLevelNodes = newCurLevelNodes;
+      return this;
+    }
+
+  }
+
+  public static class DrawableNode {
+
+    String name;
+    String content;
+    List<DrawableNode> childNodes;
+
+    DrawableNode(String name, String content) {
+      this.name = name;
+      this.content = content;
+    }
+
+    void addChildNode(DrawableNode childNode){
+      if (childNodes==null){
+        childNodes=new ArrayList<>();
+      }
+      childNodes.add(childNode);
     }
   }
 
-  private interface OnProcessResources {
+  public interface OnProcessResources {
 
     /**
      * @return 处理名称
@@ -392,27 +414,15 @@ public class DrawableGenerate {
     String onProcessContent();
   }
 
-  private static List<DrawableNode> process(List<DrawableNode> curLevelNodes,
-      List<OnProcessResources> onProcessResources) {
-    List<DrawableNode> newCurLevelNodes = new ArrayList<>();
-    for (DrawableNode curDepthNode : curLevelNodes) {
-      for (OnProcessResources process : onProcessResources) {
-        String childName = appendFileNameOrEmpty(curDepthNode.getName(), process.onProcessName());
-        String childContent = appendContent(curDepthNode.getContent(), process.onProcessContent());
-
-        DrawableNode childNode = new DrawableNode(childName, childContent);
-
-        curDepthNode.addChildNode(childNode);
-        newCurLevelNodes.add(childNode);
-      }
-    }
-    return newCurLevelNodes;
-  }
-
   private static String appendFileNameOrEmpty(String fileName, String appendName) {
     if (fileName == null || fileName.isEmpty()) {
       return appendName;
     }
+
+    if (appendName == null || appendName.isEmpty()) {
+      return fileName;
+    }
+
     return fileName + "_" + appendName;
   }
 
@@ -427,4 +437,20 @@ public class DrawableGenerate {
     return type + value;
   }
 
+  private static File makeFile(File outDir,String fileName) {
+    return new File(outDir, fileName + FILE_SUFFIX);
+  }
+
+  private static void generateXmlFile(File outFile, byte[] outBytes) throws IOException {
+
+    BufferedOutputStream outputStream = new BufferedOutputStream(
+        new FileOutputStream(outFile));
+    try {
+      outputStream.write(HEAD, 0, HEAD.length);
+      outputStream.write(outBytes, 0, outBytes.length);
+    } finally {
+      outputStream.flush();
+      outputStream.close();
+    }
+  }
 }
