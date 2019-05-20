@@ -211,7 +211,7 @@ class DrawableGenerate private constructor(private val builder: Builder) {
             for (resId in colorIds) {
                 onProcessResources.add(object : OnProcessResources {
                     override fun onProcessName(): String {
-                        return "solid2_${resId.toLowerCase()}"
+                        return "solid_${resId.toLowerCase()}"
                     }
 
                     override fun onProcessContent(): String {
