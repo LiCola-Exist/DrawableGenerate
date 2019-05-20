@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="transparent">#00000000</color>
+  <color name="orange_minor">#FFAD33</color>
+  <color name="orange_medium">#FFA116</color>
+  <color name="orange_light">#FFDEAD</color>
+
+  <color name="orange">#F6B128</color><!--无透明-->
+  <color name="orange_A87">#DEF6B128</color><!--87%透明-->
+  <color name="orange_A54">#8AF6B128</color><!--54%透明-->
+  <color name="orange_A32">#42F6B128</color><!--32%透明-->
+  <color name="orange_A12">#1EF6B128</color><!--12%透明-->
+
+  <color name="white">#FFFFFF</color>
+  <color name="white_A87">#DEFFFFFF</color>
+  <color name="white_A54">#8AFFFFFF</color>
+  <color name="white_A32">#42FFFFFF</color>
+  <color name="white_A12">#1EFFFFFF</color>
+
+  <color name="white_minor">#F8F8F8</color><!--页面底色-->
+  <color name="white_light">#F7F7F7 </color><!--标签栏/导航栏-->
+
+  <color name="black">#000000</color>
+  <color name="black_A87">#DE000000</color>
+  <color name="black_A80">#CC000000</color>
+  <color name="black_A70">#B2000000</color>
+  <color name="black_A60">#99000000</color>
+  <color name="black_A54">#8A000000</color>
+  <color name="black_A50">#7F000000</color>
+  <color name="black_A40">#66000000</color>
+  <color name="black_A32">#42000000</color>
+  <color name="black_A25">#3F000000</color>
+  <color name="black_A20">#33000000</color>
+  <color name="black_A12">#1E000000</color>
+
+  <color name="gray_deep">#A7A9B3</color>
+  <color name="gray_medium">#E4E4E4</color>
+  <color name="gray_light">#DEDFE0</color>
+  <color name="gray">#C3CDDD</color>
+  <color name="gray_A87">#DEC3CDDD</color>
+  <color name="gray_A54">#8AC3CDDD</color>
+  <color name="gray_A32">#42C3CDDD</color>
+  <color name="gray_A12">#1EC3CDDD</color>
+  <color name="gray_A4">#0AC3CDDD</color><!--4%-->
+
+  <color name="blue">#4088FF</color>
+  <color name="blue_A87">#DE4088FF</color>
+  <color name="blue_A54">#8A4088FF</color>
+  <color name="blue_A32">#424088FF</color>
+  <color name="blue_A12">#1E4088FF</color>
+
+  <color name="red">#FB370A</color>
+  <color name="red_A87">#DEFB370A</color>
+  <color name="red_A54">#8AFB370A</color>
+  <color name="red_A32">#42FB370A</color>
+  <color name="red_A12">#1EFB370A</color>
+
+  <color name="green">#14CCB7</color>
+  <color name="green_A87">#DE14CCB7</color>
+  <color name="green_A54">#8A14CCB7</color>
+  <color name="green_A32">#4214CCB7</color>
+  <color name="green_A12">#1E14CCB7</color>
+
+  <color name="cyan">#2C9A2D</color>
+  <color name="cyan_A87">#DE2C9A2D</color>
+  <color name="cyan_A54">#8A2C9A2D</color>
+  <color name="cyan_A32">#422C9A2D</color>
+  <color name="cyan_A12">#1E2C9A2D</color>
+
+
+</resources>
